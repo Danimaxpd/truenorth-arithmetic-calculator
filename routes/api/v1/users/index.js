@@ -6,7 +6,7 @@ const { onSendHandler } = require('../../../../hooks');
 
 async function usersRoutes(fastify, options) {
     onSendHandler(fastify);
-    fastify.get('/users',  {
+    fastify.get('/users',{
         onRequest: [fastify.authenticate]
       }, async (request, reply) => {
         // TODO
