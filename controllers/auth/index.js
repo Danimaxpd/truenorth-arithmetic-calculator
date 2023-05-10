@@ -1,11 +1,13 @@
-async function getToken(request, reply, fastify, prisma, username, password) {
-  const { passId } = request.body;
+const bcrypt = require("bcrypt")
+
+async function getToken(request, reply, fastify) {
+  const { passId, username, password } = request.body;
 
   if (passId !== fastify.VALID_PASS_ID) {
     reply.status(401).send({ message: 'Invalid credentials' });
     return;
   }
-  const user = await prisma.user.findUnique({ where: { username } });
+  const user = await fastify.prisma.User.findUnique({ where: { username } });
   if (!user) {
     reply.status(401).send({ message: 'Invalid credentials' });
     return;

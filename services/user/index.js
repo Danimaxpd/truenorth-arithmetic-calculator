@@ -13,12 +13,13 @@ class UserController {
         throw classException(`The data of the user is required`, 400);
       }
       const passwordHash = await bcrypt.hash(user.password, 10);
-      const newUser = await this.prisma.User.create({
-        data: { ...user, password: passwordHash },
+      const newUser = await this.prisma.user.create({
+        data: { username: user.username, password: passwordHash },
       });
       return newUser;
     } catch (error) {
-      throw classException(`Could not create user: ${error.message}`, 200);
+      console.error(error.message);
+      throw classException(`Could not create user`, 200);
     }
   }
 

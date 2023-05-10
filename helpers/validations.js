@@ -1,5 +1,3 @@
-const bcrypt = require("bcrypt")
-
 function validateUserRequest(body) {
     const requiredProperties = ['username', 'password'];
 

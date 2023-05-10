@@ -4,11 +4,12 @@
 const UserController = require('../../../../services/user');
 
 async function usersRoutes(fastify, options) {
-  fastify.post('/users', {
-    onRequest: [fastify.authenticate]
-  }, async (request, reply) => {
+
+  const UserService = new UserController(fastify.prisma);
+
+  fastify.post('/', async (request, reply) => {
     try {
-      const newUser = await UserController.createUser(request.body);
+      const newUser = await UserService.createUser(request.body);
       reply.send(newUser);
     } catch (error) {
       reply.status(error.code).send(error.message);
@@ -20,7 +21,7 @@ async function usersRoutes(fastify, options) {
   }, async (request, reply) => {
     try {
       const { skip = 0, take = 10, orderBy = { id: 'asc' }, where = {} } = request.query;
-      const users = await UserController.getUsers({
+      const users = await UserService.getUsers({
         skip: parseInt(skip, 10),
         take: parseInt(take, 10),
         orderBy,
@@ -36,7 +37,7 @@ async function usersRoutes(fastify, options) {
     onRequest: [fastify.authenticate]
   }, async (request, reply) => {
     try {
-      const user = await UserController.getUserById(request.params.id);
+      const user = await UserService.getUserById(request.params.id);
       reply.send(user);
     } catch (error) {
       reply.status(error.code).send(error.message);
@@ -47,7 +48,7 @@ async function usersRoutes(fastify, options) {
     onRequest: [fastify.authenticate]
   }, async (request, reply) => {
     try {
-      const updatedUser = await UserController.updateUser(request.params.id, request.body);
+      const updatedUser = await UserService.updateUser(request.params.id, request.body);
       reply.send(updatedUser);
     } catch (error) {
       reply.status(error.code).send(error.message);
@@ -58,7 +59,7 @@ async function usersRoutes(fastify, options) {
     onRequest: [fastify.authenticate]
   }, async (request, reply) => {
     try {
-      const deletedUser = await UserController.deleteUser(request.params.id);
+      const deletedUser = await UserService.deleteUser(request.params.id);
       reply.send(deletedUser);
     } catch (error) {
       reply.status(error.code).send(error.message);
