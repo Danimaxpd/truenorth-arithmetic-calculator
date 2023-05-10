@@ -1,11 +1,9 @@
 'use strict'
 
 
-const { onSendHandler } = require('../../../../hooks');
 const Calculator = require('../../../../services/calculator')
 
 async function calculatorRoutes(fastify, options) {
-  onSendHandler(fastify);
   // Addition endpoint
   fastify.get('/add/:a/:b', {
     onRequest: [fastify.authenticate]

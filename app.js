@@ -4,11 +4,14 @@ require('dotenv').config();
 const path = require('path')
 const AutoLoad = require('@fastify/autoload');
 const { currentDate, encodedJWT, validPassId, expiresIn } = require('./helpers/global-variables');
+const  {onSendHandler} = require("./hooks/index");
 
 // Pass --options via CLI arguments in command to enable these options.
 module.exports.options = {}
 
 module.exports = async function (fastify, opts) {
+  // Hooks
+  onSendHandler(fastify);
   // Add the global variables to the Fastify instance
   fastify.decorate('CURRENT_DATE', currentDate)
   fastify.decorate('ENCODE_JWT', encodedJWT)
