@@ -1,11 +1,11 @@
 'use strict'
 
 
-const UserController = require('../../../../services/user');
+const User = require('../../../../services/user');
 
 async function usersRoutes(fastify, options) {
 
-  const UserService = new UserController(fastify.prisma);
+  const UserService = new User(fastify.prisma);
 
   fastify.post('/', async (request, reply) => {
     try {

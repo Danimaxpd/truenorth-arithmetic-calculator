@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const { classException } = require("../../helpers/throw_functions");
 const { validateUserRequest } = require("../../helpers/validations");
 
-class UserController {
+class User {
   constructor(prisma) {
     this.prisma = prisma;
   }
@@ -131,4 +131,4 @@ class UserController {
   }
 }
 
-module.exports = UserController;
+module.exports = User;
