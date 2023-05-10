@@ -1,6 +1,5 @@
 const bcrypt = require("bcrypt");
 const { classException } = require("../../helpers/throw_functions");
-const { validateUserRequest } = require("../../helpers/validations");
 
 class User {
   constructor(prisma) {
@@ -9,7 +8,7 @@ class User {
 
   async createUser(user) {
     try {
-      if (!user || !validateUserRequest(user)) {
+      if (!user.username || !user.password) {
         throw classException(`The data of the user is required`, 400);
       }
       const passwordHash = await bcrypt.hash(user.password, 10);
@@ -24,13 +23,13 @@ class User {
   }
 
   async getUsers(skip, take, orderBy, where) {
-    if (orderBy && orderBy.length) {
-      orderBy = JSON.parse(orderBy);
-    }
-    if (where && where.length) {
-      where = JSON.parse(where);
-    }
     try {
+      if (orderBy && orderBy.length) {
+        orderBy = JSON.parse(orderBy);
+      }
+      if (where && where.length) {
+        where = JSON.parse(where);
+      }
       const [users, totalCount] = await Promise.all([
         this.prisma.user.findMany({
           skip: skip,
