@@ -12,7 +12,7 @@ model User {
   id        Int      @id @default(autoincrement())
   username  String   @unique
   password  String
-  status    String
+  status    Boolean @default(true)
   records   Record[]
   deleted Boolean @default(false)
   createdAt  DateTime   @default(now())
