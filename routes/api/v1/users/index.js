@@ -16,24 +16,22 @@ async function usersRoutes(fastify, options) {
     }
   });
 
-  fastify.get('/users', {
+  fastify.get('/filter', {
     onRequest: [fastify.authenticate]
   }, async (request, reply) => {
     try {
-      const { skip = 0, take = 10, orderBy = { id: 'asc' }, where = {} } = request.query;
-      const users = await UserService.getUsers({
-        skip: parseInt(skip, 10),
-        take: parseInt(take, 10),
-        orderBy,
-        where,
-      });
+      let { skip = 0, take = 10, orderBy = { id: 'asc' }, where = {} } = request.query;
+      skip = parseInt(skip, 10);
+      take = parseInt(take, 10);
+
+      const users = await UserService.getUsers(skip, take, orderBy, where);
       reply.send(users);
     } catch (error) {
       reply.status(error.code).send(error.message);
     }
   });
 
-  fastify.get('/users/:id', {
+  fastify.get('/by_id/:id', {
     onRequest: [fastify.authenticate]
   }, async (request, reply) => {
     try {
@@ -44,7 +42,7 @@ async function usersRoutes(fastify, options) {
     }
   });
 
-  fastify.put('/users/:id', {
+  fastify.put('/by_id/:id', {
     onRequest: [fastify.authenticate]
   }, async (request, reply) => {
     try {
@@ -55,7 +53,7 @@ async function usersRoutes(fastify, options) {
     }
   });
 
-  fastify.delete('/users/:id', {
+  fastify.delete('/by_id/:id', {
     onRequest: [fastify.authenticate]
   }, async (request, reply) => {
     try {

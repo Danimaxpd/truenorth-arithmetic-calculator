@@ -1,10 +1,10 @@
-const { classException } = require('../../helpers/throw_functions');
-const bcrypt = require('bcrypt');
-const { validateUserRequest } = require('../../helpers/validations')
+const bcrypt = require("bcrypt");
+const { classException } = require("../../helpers/throw_functions");
+const { validateUserRequest } = require("../../helpers/validations");
 
 class UserController {
   constructor(prisma) {
-    this.prisma = prisma
+    this.prisma = prisma;
   }
 
   async createUser(user) {
@@ -23,16 +23,22 @@ class UserController {
     }
   }
 
-  async getUsers(skip = 0, take = 10, orderBy = { id: 'asc' }, where = {}) {
+  async getUsers(skip, take, orderBy, where) {
+    if (orderBy && orderBy.length) {
+      orderBy = JSON.parse(orderBy);
+    }
+    if (where && where.length) {
+      where = JSON.parse(where);
+    }
     try {
       const [users, totalCount] = await Promise.all([
         this.prisma.user.findMany({
           skip: skip,
           take: take,
           orderBy: orderBy,
-          where: where
+          where: where,
         }),
-        this.prisma.user.count({ where: where })
+        this.prisma.user.count({ where: where }),
       ]);
       const currentPage = skip / take + 1;
       const totalPages = Math.ceil(totalCount / take);
@@ -41,59 +47,86 @@ class UserController {
         metadata: {
           totalCount: totalCount,
           currentPage: currentPage,
-          totalPages: totalPages
-        }
+          totalPages: totalPages,
+        },
       };
     } catch (error) {
-      throw classException(`Could not get users: ${error.message}`, 200);
+      console.error(error.message);
+      throw classException(`Could not get users`, 200);
     }
   }
 
   async getUserById(id) {
     try {
-      if (!id || (typeof id !== 'string' && typeof id !== 'number')) {
+      if (!id) {
         throw classException(`Invalid or missing ID `, 400);
       }
-      const user = await this.prisma.user.findUnique({
+      if (id && typeof id !== "number") {
+        id = parseInt(id, 10);
+      }
+      if (isNaN(id)) {
+        throw classException(`Invalid or missing ID `, 400);
+      }
+
+      return await this.prisma.user.findUnique({
         where: { id },
       });
-      return user;
     } catch (error) {
-      throw classException(`Could not get user: ${error.message}`, 200);
+      console.error(error.message);
+      throw classException(`Could not get user`, 200);
     }
   }
 
   async updateUser(id, userData) {
     try {
-      if (!id || (typeof id !== 'string' && typeof id !== 'number')) {
+      if (!id) {
+        throw classException(`Invalid or missing ID `, 400);
+      }
+      if (id && typeof id !== "number") {
+        id = parseInt(id, 10);
+      }
+      if (isNaN(id)) {
         throw classException(`Invalid or missing ID `, 400);
       }
       if (!userData) {
         throw classException(`The data of the user is required`, 400);
       }
-      const passwordHash = await bcrypt.hash(user.password, 10);
+      const passwordHash = userData.password
+        ? await bcrypt.hash(userData.password, 10)
+        : undefined;
+      const dataToUpdate = passwordHash
+        ? { ...userData, password: passwordHash }
+        : userData;
       const updatedUser = await this.prisma.user.update({
         where: { id },
-        data: { ...userData, password: passwordHash },
+        data: dataToUpdate,
       });
       return updatedUser;
     } catch (error) {
-      throw classException(`Could not update user: ${error.message}`, 200);
+      console.error(error.message);
+      throw classException(`Could not update user`, 200);
     }
   }
 
   async deleteUser(id) {
     try {
-      if (!id || (typeof id !== 'string' && typeof id !== 'number')) {
+      if (!id) {
         throw classException(`Invalid or missing ID `, 400);
       }
-      const deletedUser = await prisma.record.update({
-        where: { id: id },
-        data: { deleted: true },
+      if (id && typeof id !== "number") {
+        id = parseInt(id, 10);
+      }
+      if (isNaN(id)) {
+        throw classException(`Invalid or missing ID `, 400);
+      }
+      const deletedUser = await this.prisma.user.update({
+        where: { id },
+        data: { deleted: true, status: false },
       });
       return deletedUser;
     } catch (error) {
-      throw classException(`Could not delete user: ${error.message}`, 200);
+      console.error(error.message);
+      throw classException(`Could not delete user`, 200);
     }
   }
 }
