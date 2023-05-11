@@ -1,6 +1,3 @@
-'use strict'
-
-
 const CalculatorController = require('../../../../controllers/calculator')
 
 async function calculatorRoutes(fastify, options) {
@@ -11,8 +8,8 @@ async function calculatorRoutes(fastify, options) {
   }, async (request, reply) => {
     try {
       const { operationType, a, b, length} = request.body;
-      const userId = request.user.id
-      const result = calculatorCtrl.performOperation(userId, operationType, a, b, length);
+      const userId = request.user.userId;
+      const result = await calculatorCtrl.performOperation(userId, operationType, a, b, length);
       reply.send(result);
     } catch (error) {
       reply.status(error.code).send(error.message);

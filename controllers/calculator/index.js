@@ -5,17 +5,17 @@ const { classException } = require("../../helpers/throw_functions");
 class CalculatorController {
   constructor(fastify) {
     this.fastify = fastify;
-    this.CalculatorService = Calculator;
     this.OperationService = new Operation(fastify.prisma);
   }
 
   async getOperationCost(operationType) {
     try {
-      const typeOperationCost = await prisma.typeOperationCost.findUnique({
-        where: { name: operationType },
+      const OperationCost = await this.fastify.prisma.Operation.findUnique({
+        where: { type: operationType },
       });
-      return typeOperationCost.cost;
+      return OperationCost.cost;
     } catch (error) {
+      console.error('error-->>',error);
       return 0;
     }
   }
@@ -24,37 +24,37 @@ class CalculatorController {
     let result;
     switch (operationType) {
       case "addition":
-        result = await this.CalculatorService.addition(
+        result = await Calculator.add(
           parseInt(a),
           parseInt(b)
         );
         break;
       case "subtraction":
-        result = await this.CalculatorService.subtraction(
+        result = await Calculator.subtract(
           parseInt(a),
           parseInt(b)
         );
         break;
       case "multiplication":
-        result = await this.CalculatorService.multiplication(
+        result = await Calculator.multiply(
           parseInt(a),
           parseInt(b)
         );
         break;
       case "division":
-        result = await this.CalculatorService.division(
+        result = await Calculator.divide(
           parseInt(a),
           parseInt(b)
         );
         break;
       case "square_root":
-        result = await this.CalculatorService.square_root(
+        result = await Calculator.squareRoot(
           parseInt(a),
           parseInt(b)
         );
         break;
       case "random_string":
-        result = await this.CalculatorService.randomString(parseInt(length));
+        result = await Calculator.randomString(parseInt(length));
         break;
 
       default:
@@ -67,29 +67,28 @@ class CalculatorController {
 
   async performOperation(userId, operationType, a, b, length) {
     try {
-      const operationCost = this.getOperationCost(operationType);
+      const operationCost = await this.getOperationCost(operationType);
       // Retrieve the user's current balance
-      const user = await prisma.user.findUnique({ where: { id: userId } });
+      const user = await this.fastify.prisma.user.findUnique({ where: { id: userId } });
       const userBalance = user?.balance || 0;
 
       // Check if the user's balance is sufficient
       if (userBalance < operationCost) {
         throw classException("Insufficient balance", 400);
       }
-
-      // Deduct the operation cost from the user's balance and update the User model
-      const newBalance = userBalance - operationCost;
-      const updatedUser = await prisma.user.update({
-        where: { id: userId },
-        data: { balance: newBalance },
-      });
+  
       const operationResult = await this.callOperation(operationType, a, b, length);
-
       if (!operationResult) {
         throw classException("Error Performing operation", 200);
       }
+      // Deduct the operation cost from the user's balance and update the User model
+      const newBalance = userBalance - operationCost;
+      const updatedUser = await this.fastify.prisma.user.update({
+        where: { id: userId },
+        data: { balance: newBalance },
+      });
 
-      const record = await prisma.record.create({
+      const record = await this.fastify.prisma.record.create({
         data: {
           amount: operationCost,
           user_balance: newBalance,
@@ -106,4 +105,4 @@ class CalculatorController {
   }
 }
 
-module.exports = { CalculatorController };
+module.exports = CalculatorController;
