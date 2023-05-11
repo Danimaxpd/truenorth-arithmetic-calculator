@@ -53,8 +53,7 @@ class Calculator {
       };
 
       const response = await axios.request(options);
-
-      if (response.status === 201) {
+      if (response.status === 200) {
         const data = response.data;
         return data.result.random.data
       }
