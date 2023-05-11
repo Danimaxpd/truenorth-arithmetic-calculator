@@ -15,7 +15,7 @@ class CalculatorController {
       });
       return OperationCost.cost;
     } catch (error) {
-      console.error('error-->>',error);
+      console.error('error-->>', error);
       return 0;
     }
   }
@@ -74,9 +74,9 @@ class CalculatorController {
 
       // Check if the user's balance is sufficient
       if (userBalance < operationCost) {
-        throw classException("Insufficient balance", 400);
+        throw classException(`Insufficient balance, your current balance is ${userBalance}`, 400);
       }
-  
+
       const operationResult = await this.callOperation(operationType, a, b, length);
       if (!operationResult) {
         throw classException("Error Performing operation", 200);
@@ -100,6 +100,9 @@ class CalculatorController {
 
       return { updatedUser, record, operationResult };
     } catch (error) {
+      if (error.code && error.message) {
+        throw error;
+      }
       throw classException("Error Performing operation", 500);
     }
   }
