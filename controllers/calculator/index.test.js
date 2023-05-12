@@ -1,5 +1,4 @@
 const CalculatorController = require('./');
-const { classException } = require('../../helpers/throw_functions');
 
 // Mocks
 const mockFastify = {
@@ -10,7 +9,7 @@ const mockFastify = {
                     return { cost: 10 };
                 } else {
                     return null;
-                }
+                }S
             },
         },
         user: {
