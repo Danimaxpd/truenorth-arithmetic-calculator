@@ -17,7 +17,9 @@ class User {
       });
       return newUser;
     } catch (error) {
-      console.error(error.message);
+      if (error.code && error.message) {
+        throw error;
+      }
       throw classException(`Could not create user`, 200);
     }
   }
@@ -50,7 +52,9 @@ class User {
         },
       };
     } catch (error) {
-      console.error(error.message);
+      if (error.code && error.message) {
+        throw error;
+      }
       throw classException(`Could not get users`, 200);
     }
   }
@@ -71,7 +75,9 @@ class User {
         where: { id },
       });
     } catch (error) {
-      console.error(error.message);
+      if (error.code && error.message) {
+        throw error;
+      }
       throw classException(`Could not get user`, 200);
     }
   }
@@ -102,7 +108,9 @@ class User {
       });
       return updatedUser;
     } catch (error) {
-      console.error(error.message);
+      if (error.code && error.message) {
+        throw error;
+      }
       throw classException(`Could not update user`, 200);
     }
   }
@@ -124,7 +132,9 @@ class User {
       });
       return deletedUser;
     } catch (error) {
-      console.error(error.message);
+      if (error.code && error.message) {
+        throw error;
+      }
       throw classException(`Could not delete user`, 200);
     }
   }

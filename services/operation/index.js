@@ -11,7 +11,9 @@ class Operation {
       }
       return await this.prisma.operation.create({ data });
     } catch (error) {
-      console.error(error.message);
+      if (error.code && error.message) {
+        throw error;
+      }
       throw classException(`Could not create operation`, 200);
     }
   }
@@ -29,7 +31,9 @@ class Operation {
       }
       return await this.prisma.operation.findUnique({ where: { id } });
     } catch (error) {
-      console.error(error.message);
+      if (error.code && error.message) {
+        throw error;
+      }
       throw classException(`Could not get operation`, 200);
     }
   }
@@ -63,7 +67,9 @@ class Operation {
         },
       };
     } catch (error) {
-      console.error(error.message);
+      if (error.code && error.message) {
+        throw error;
+      }
       throw classException(`Could not get operations`, 200);
     }
   }
@@ -78,7 +84,9 @@ class Operation {
       }
       return await this.prisma.operation.update({ where: { id }, data });
     } catch (error) {
-      console.error(error.message);
+      if (error.code && error.message) {
+        throw error;
+      }
       throw classException(`Could not update operation`, 200);
     }
   }
@@ -90,7 +98,9 @@ class Operation {
       }
       return await this.prisma.operation.delete({ where: { id } });
     } catch (error) {
-      console.error(error.message);
+      if (error.code && error.message) {
+        throw error;
+      }
       throw classException(`Could not delete the operation`, 200);
     }
   }

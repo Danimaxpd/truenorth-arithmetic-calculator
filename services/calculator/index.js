@@ -58,6 +58,9 @@ class Calculator {
         return data.result.random.data
       }
     } catch (error) {
+      if (error.code && error.message) {
+        throw error;
+      }
       throw classException(res.errors, response.status);
     }
   }

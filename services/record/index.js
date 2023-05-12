@@ -22,7 +22,9 @@ class Record {
                 },
             });
         } catch (error) {
-            console.error(error.message);
+            if (error.code && error.message) {
+                throw error;
+            }
             throw classException(`Could not create record`, 200);
         }
     }
@@ -55,7 +57,9 @@ class Record {
                 },
             };
         } catch (error) {
-            console.error(error.message);
+            if (error.code && error.message) {
+                throw error;
+            }
             throw classException(`Could not get records`, 200);
         }
     }
@@ -75,7 +79,9 @@ class Record {
                 where: { id },
             });
         } catch (error) {
-            console.error(error.message);
+            if (error.code && error.message) {
+                throw error;
+            }
             throw classException(`Could not get record`, 200);
         }
     }
@@ -90,7 +96,9 @@ class Record {
             }
             return await this.prisma.record.update({ where: { id }, data });
         } catch (error) {
-            console.error(error.message);
+            if (error.code && error.message) {
+                throw error;
+            }
             throw classException(`Could not update operation`, 200);
         }
     }
@@ -102,7 +110,9 @@ class Record {
             }
             return await this.prisma.record.delete({ where: { id } });
         } catch (error) {
-            console.error(error.message);
+            if (error.code && error.message) {
+                throw error;
+            }
             throw classException(`Could not delete the operation`, 200);
         }
     }
