@@ -9,7 +9,7 @@ const mockFastify = {
                     return { cost: 10 };
                 } else {
                     return null;
-                }S
+                }
             },
         },
         user: {

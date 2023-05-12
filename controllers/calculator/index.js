@@ -1,11 +1,11 @@
 const Calculator = require("../../services/calculator");
-const Operation = require("../../services/operation");
+const Record = require("../../services/record");
 const { classException } = require("../../helpers/throw_functions");
 
 class CalculatorController {
   constructor(fastify) {
     this.fastify = fastify;
-    this.OperationService = new Operation(fastify.prisma);
+    this.recordService = new Record(fastify.prisma);
   }
 
   async getOperationCost(operationType) {
@@ -59,12 +59,9 @@ class CalculatorController {
         "square_root",
         "random_string",
       ];
-      const validation = operationsType.includes(operationType);
+
       if (!operationsType.includes(operationType)) {
-        throw classException(
-          `The operation type is not valid`,
-          400
-        );
+        throw classException(`The operation type is not valid`, 400);
       }
       const operationCost = await this.getOperationCost(operationType);
       // Retrieve the user's current balance
@@ -96,16 +93,11 @@ class CalculatorController {
         where: { id: userId },
         data: { balance: newBalance },
       });
+      const amount = operationCost;
+      const user_balance = newBalance;
+      const operation_response = "Success";
 
-      const record = await this.fastify.prisma.record.create({
-        data: {
-          amount: operationCost,
-          user_balance: newBalance,
-          operation_response: "Success",
-          user: { connect: { id: userId } },
-          operation: { connect: { type: operationType } },
-        },
-      });
+      const record = await this.recordService.createRecord({amount, user_balance, operation_response, userId, operationType});
 
       return { updatedUser, record, operationResult };
     } catch (error) {

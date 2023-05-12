@@ -10,7 +10,20 @@ function validateUserRequest(body) {
     return true;
 }
 
+function validateRecordRequest(body) {
+    const requiredProperties = ['amount', 'user_balance', "operation_response", "userId", "operationType"];
+
+    for (const property of requiredProperties) {
+        if (!body[property]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 
 module.exports = {
-    validateUserRequest
+    validateUserRequest,
+    validateRecordRequest
 };
