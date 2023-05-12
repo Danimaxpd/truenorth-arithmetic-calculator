@@ -15,7 +15,6 @@ class CalculatorController {
       });
       return OperationCost.cost;
     } catch (error) {
-      console.error('error-->>', error);
       return 0;
     }
   }
@@ -24,34 +23,19 @@ class CalculatorController {
     let result;
     switch (operationType) {
       case "addition":
-        result = await Calculator.add(
-          parseInt(a),
-          parseInt(b)
-        );
+        result = await Calculator.add(parseInt(a), parseInt(b));
         break;
       case "subtraction":
-        result = await Calculator.subtract(
-          parseInt(a),
-          parseInt(b)
-        );
+        result = await Calculator.subtract(parseInt(a), parseInt(b));
         break;
       case "multiplication":
-        result = await Calculator.multiply(
-          parseInt(a),
-          parseInt(b)
-        );
+        result = await Calculator.multiply(parseInt(a), parseInt(b));
         break;
       case "division":
-        result = await Calculator.divide(
-          parseInt(a),
-          parseInt(b)
-        );
+        result = await Calculator.divide(parseInt(a), parseInt(b));
         break;
       case "square_root":
-        result = await Calculator.squareRoot(
-          parseInt(a),
-          parseInt(b)
-        );
+        result = await Calculator.squareRoot(parseInt(a), parseInt(b));
         break;
       case "random_string":
         result = await Calculator.randomString(parseInt(length));
@@ -67,17 +51,42 @@ class CalculatorController {
 
   async performOperation(userId, operationType, a, b, length) {
     try {
+      const operationsType = [
+        "addition",
+        "subtraction",
+        "multiplication",
+        "division",
+        "square_root",
+        "random_string",
+      ];
+      const validation = operationsType.includes(operationType);
+      if (!operationsType.includes(operationType)) {
+        throw classException(
+          `The operation type is not valid`,
+          400
+        );
+      }
       const operationCost = await this.getOperationCost(operationType);
       // Retrieve the user's current balance
-      const user = await this.fastify.prisma.user.findUnique({ where: { id: userId } });
+      const user = await this.fastify.prisma.user.findUnique({
+        where: { id: userId },
+      });
       const userBalance = user?.balance || 0;
 
       // Check if the user's balance is sufficient
       if (userBalance < operationCost) {
-        throw classException(`Insufficient balance, your current balance is ${userBalance}`, 400);
+        throw classException(
+          `Insufficient balance, your current balance is ${userBalance}`,
+          400
+        );
       }
 
-      const operationResult = await this.callOperation(operationType, a, b, length);
+      const operationResult = await this.callOperation(
+        operationType,
+        a,
+        b,
+        length
+      );
       if (!operationResult) {
         throw classException("Error Performing operation", 200);
       }
