@@ -105,17 +105,27 @@ class Record {
 
     async deleteRecord(id) {
         try {
-            if (!id) {
-                throw classException("ID is required", 400);
-            }
-            return await this.prisma.record.delete({ where: { id } });
+          if (!id) {
+            throw classException(`Invalid or missing ID `, 400);
+          }
+          if (id && typeof id !== "number") {
+            id = parseInt(id, 10);
+          }
+          if (isNaN(id)) {
+            throw classException(`Invalid or missing ID `, 400);
+          }
+          const deletedUser = await this.prisma.record.update({
+            where: { id },
+            data: { deleted: true },
+          });
+          return deletedUser;
         } catch (error) {
-            if (error.code && error.message) {
-                throw error;
-            }
-            throw classException(`Could not delete the operation`, 200);
+          if (error.code && error.message) {
+            throw error;
+          }
+          throw classException(`Could not delete user`, 200);
         }
-    }
+      }
 }
 
 module.exports = Record;
