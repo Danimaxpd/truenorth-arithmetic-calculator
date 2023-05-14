@@ -5,11 +5,15 @@ const path = require('path')
 const AutoLoad = require('@fastify/autoload');
 const { currentDate, encodedJWT, validPassId, expiresIn } = require('./helpers/global-variables');
 const  {onSendHandler} = require("./hooks/index");
+const cors = require('@fastify/cors');
 
 // Pass --options via CLI arguments in command to enable these options.
 module.exports.options = {}
 
 module.exports = async function (fastify, opts) {
+  fastify.register(cors, {
+    origin: process.env.APP_ORIGIN_DOMAIN
+  })
   // Hooks
   onSendHandler(fastify);
   // Add the global variables to the Fastify instance
