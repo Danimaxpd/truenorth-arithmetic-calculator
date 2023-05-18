@@ -46,6 +46,10 @@ class Calculator {
 
   static async randomString(length) {
     try {
+      if(length < 1 && length > 32) {
+        throw classException('The length of each string. Must be within the [1, 32] range. All strings will be of the same length.', 400);
+      }
+      
       const apiKey = process.env.API_RANDOMORG_KEY;
       const apiUrl = process.env.API_RANDOMORG_URL;
       if (!apiKey || !apiUrl) {
