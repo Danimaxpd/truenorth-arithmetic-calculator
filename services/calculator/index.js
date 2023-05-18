@@ -4,24 +4,45 @@ const { classException } = require("../../helpers/throw_functions");
 
 class Calculator {
   static add(a, b) {
-    return a + b;
+    try {
+      return a + b;
+    } catch (error) {
+      return 0;
+    }
   }
 
   static subtract(a, b) {
-    return a - b;
+    try {
+      return a - b;
+    } catch (error) {
+      return 0;
+    }
   }
 
   static multiply(a, b) {
-    return a * b;
+    try {
+      return a * b;
+    } catch (error) {
+      return 0;
+    }
   }
 
   static divide(a, b) {
-    return a / b;
+    try {
+      return a / b;
+    } catch (error) {
+      return 0;
+    }
   }
 
   static squareRoot(a) {
-    return Math.sqrt(a);
+    try {
+      return Math.sqrt(a);
+    } catch (error) {
+      return 0;
+    }
   }
+
 
   static async randomString(length) {
     try {
